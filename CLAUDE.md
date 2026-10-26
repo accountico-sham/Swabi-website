@@ -17,6 +17,9 @@ Do all of this without asking further questions:
 ## Scheduling a post for later
 Give the post a future `date:` with a time and UK offset, e.g. `date: 2026-11-02 08:00:00 +0000` (GMT) or `+0100` (BST), and push it. It stays hidden until then. The `Scheduled publish` workflow checks every 15 minutes and rebuilds the site once the time has passed, so allow up to about 30 minutes. If a social post links to it, schedule the social post at least 30 minutes later. To publish straight away, use a date/time in the past.
 
+## Video covers (Instagram Reels)
+Every video scheduled to Instagram must have a cover image, or the Reel shows as a blank tile. Make a 1080x1920 JPG cover in the Swabi style (logo, kicker, headline, "Watch" pill) with all text inside the centre 1080x1440 area, save it as `assets/blog/<short-title>-cover.jpg`, and pass its URL as `videoThumbnailUrl` in Metricool. Use the same cover for Facebook and LinkedIn video posts.
+
 ## Scheduling a Reddit post
 Add a file to `_reddit/` using the template in `_reddit/README.md` (title, `when:` in UK time, body in Reddit markdown). The same `Scheduled publish` workflow posts it to r/Crypto_Taxes_UK once the time has passed and marks it as posted. Only queue posts Sham has approved.
 
