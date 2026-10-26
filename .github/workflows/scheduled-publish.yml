@@ -1,0 +1,37 @@
+# Publishes scheduled content.
+#
+# Website: blog posts with a future `date:` stay hidden until the site is rebuilt.
+# Every 15 minutes this checks whether any post's time has passed since the last
+# build, and if so rebuilds the site so the post goes live.
+#
+# GitHub sometimes runs scheduled jobs late, so allow up to ~30 minutes after the
+# set time. You can also run it by hand: Actions tab > Scheduled publish > Run workflow.
+name: Scheduled publish
+on:
+  schedule:
+    - cron: "*/15 * * * *"
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+concurrency:
+  group: scheduled-publish
+  cancel-in-progress: false
+jobs:
+  website:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild site if a scheduled post is due
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          last=$(gh api "repos/${{ github.repository }}/pages/builds/latest" --jq '.created_at' || echo "1970-01-01T00:00:00Z")
+          echo "Last site build: $last"
+          due=$(python3 .github/scripts/due_posts.py "$last")
+          if [ "$due" = "yes" ]; then
+            echo "A scheduled post is due. Rebuilding the site."
+            gh api -X POST "repos/${{ github.repository }}/pages/builds"
+          else
+            echo "Nothing due."
+          fi

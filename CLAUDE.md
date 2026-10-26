@@ -14,6 +14,9 @@ Do all of this without asking further questions:
 4. Do not change the site's design, navigation or existing posts unless asked.
 5. Commit to `main` with a clear message and push. The site updates within a couple of minutes. Then reply with the live URL: `https://swabi.co.uk/blog/<short-title>/`.
 
+## Scheduling a post for later
+Give the post a future `date:` with a time and UK offset, e.g. `date: 2026-11-02 08:00:00 +0000` (GMT) or `+0100` (BST), and push it. It stays hidden until then. The `Scheduled publish` workflow checks every 15 minutes and rebuilds the site once the time has passed, so allow up to about 30 minutes. If a social post links to it, schedule the social post at least 30 minutes later. To publish straight away, use a date/time in the past.
+
 ## Rules
 - Never publish anything Sham has not approved in chat.
 - The content is general guidance, not personal tax advice. Do not give individual advice or promise outcomes.
