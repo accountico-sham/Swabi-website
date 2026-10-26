@@ -12,7 +12,7 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   pages: write
 concurrency:
   group: scheduled-publish
@@ -34,4 +34,29 @@ jobs:
             gh api -X POST "repos/${{ github.repository }}/pages/builds"
           else
             echo "Nothing due."
+          fi
+
+  # Reddit: posts queued in _reddit/ go to r/Crypto_Taxes_UK at their set time.
+  # Does nothing until the REDDIT_* secrets are added (Settings > Secrets and variables > Actions).
+  reddit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Post due Reddit posts
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USERNAME: ${{ secrets.REDDIT_USERNAME }}
+          REDDIT_PASSWORD: ${{ secrets.REDDIT_PASSWORD }}
+        run: |
+          if [ -n "$REDDIT_CLIENT_ID" ]; then pip install --quiet praw; fi
+          python3 .github/scripts/reddit_post.py
+      - name: Save posted status
+        run: |
+          if [ -n "$(git status --porcelain _reddit)" ]; then
+            git config user.name "Swabi scheduler"
+            git config user.email "actions@users.noreply.github.com"
+            git add _reddit
+            git commit -m "Mark Reddit posts as posted"
+            git pull --rebase && git push
           fi
